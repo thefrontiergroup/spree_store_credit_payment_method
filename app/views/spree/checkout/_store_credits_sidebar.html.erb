@@ -1,4 +1,4 @@
-<% if order.total_applicable_store_credit > 0 %>
+<% if order.using_store_credit? %>
   <tr class="top-accent-separator">
     <td>Order Total:</td>
     <td><span id='summary-sub-total'><%= order.display_total.to_html %></span></td>
