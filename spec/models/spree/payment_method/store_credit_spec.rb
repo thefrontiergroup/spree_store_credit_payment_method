@@ -30,7 +30,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
       it "declines a store credit" do
         expect(subject.success?).to be false
-        subject.message.should include Spree.t('store_credit_payment_method.insufficient_funds')
+        subject.message.should include "Store credit amount remaining is not sufficient (Amount remaining: 150.0, Amount requested: 150.01)"
       end
     end
 
@@ -39,7 +39,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
       it "declines the credit" do
         expect(subject.success?).to be false
-        subject.message.should include Spree.t('store_credit_payment_method.currency_mismatch')
+        subject.message.should include "Store credit currency (AUD) does not match order currency (USD)"
       end
     end
 
@@ -93,7 +93,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
       it "declines a store credit" do
         expect(subject.success?).to be false
-        subject.message.should include Spree.t('store_credit_payment_method.insufficient_authorized_amount')
+        subject.message.should include "Unable to capture more than authorized amount (10.0)"
       end
     end
 
@@ -102,7 +102,7 @@ describe Spree::PaymentMethod::StoreCredit do
 
       it "declines the credit" do
         expect(subject.success?).to be false
-        subject.message.should include Spree.t('store_credit_payment_method.currency_mismatch')
+        subject.message.should include "Store credit currency (AUD) does not match order currency (USD)"
       end
     end
 

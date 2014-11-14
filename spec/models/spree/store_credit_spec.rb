@@ -59,9 +59,7 @@ describe "StoreCredit" do
 
         it "should set the correct error message" do
           invalid_store_credit.valid?
-          attribute_name = I18n.t('activerecord.attributes.spree/store_credit.amount_used')
-          validation_message = Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater')
-          expected_error_message = "#{attribute_name} #{validation_message}"
+          expected_error_message = "Amount used cannot be greater than the credited amount (Amount Used: 150.0, Amount: 100.0)"
           invalid_store_credit.errors.full_messages.should include(expected_error_message)
         end
       end
@@ -85,7 +83,7 @@ describe "StoreCredit" do
 
       it "adds an error message about the invalid amount used" do
         subject.valid?
-        subject.errors[:amount_used].should include(Spree.t('admin.store_credits.errors.amount_used_cannot_be_greater'))
+        subject.errors[:amount_used].should include("cannot be greater than the credited amount (Amount Used: 101.0, Amount: 100.0)")
       end
     end
 
@@ -98,7 +96,7 @@ describe "StoreCredit" do
 
       it "adds an error message about the invalid authorized amount" do
         subject.valid?
-        subject.errors[:amount_authorized].should include(Spree.t('admin.store_credits.errors.amount_authorized_exceeds_total_credit'))
+        subject.errors[:amount_authorized].should include(" exceeds the available credit (Amount Used: 0.0, Amount Authorized: 101.0, Amount: 100.0)")
       end
     end
   end
@@ -217,7 +215,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.insufficient_funds'))
+        store_credit.errors.full_messages.should include("Store credit amount remaining is not sufficient (Amount remaining: 150.0, Amount requested: 300.0)")
       end
     end
 
@@ -230,7 +228,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.currency_mismatch'))
+        store_credit.errors.full_messages.should include("Store credit currency (USD) does not match order currency (EUR)")
       end
     end
 
@@ -261,7 +259,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.insufficient_authorized_amount'))
+        store_credit.errors.full_messages.should include("Unable to capture more than authorized amount (20.0)")
       end
 
       it "does not update the store credit model" do
@@ -278,7 +276,7 @@ describe "StoreCredit" do
 
       it "adds an error to the model" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.currency_mismatch'))
+        store_credit.errors.full_messages.should include("Store credit currency (USD) does not match order currency (EUR)")
       end
 
       it "does not update the store credit model" do
@@ -412,7 +410,7 @@ describe "StoreCredit" do
 
       it "adds an error message about the currency mismatch" do
         subject
-        store_credit.errors.full_messages.should include(Spree.t('store_credit_payment_method.currency_mismatch'))
+        store_credit.errors.full_messages.should include("Store credit currency (USD) does not match order currency (AUD)")
       end
     end
 
