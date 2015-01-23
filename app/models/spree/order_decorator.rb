@@ -56,10 +56,6 @@ module SpreeStoreCredits::OrderDecorator
       total - total_applicable_store_credit
     end
 
-    def payment_required?
-      order_total_after_store_credit > 0.0
-    end
-
     def using_store_credit?
       total_applicable_store_credit > 0
     end
