@@ -1,7 +1,8 @@
 module SpreeStoreCredits::OrderDecorator
   def self.included(base)
-    base.state_machine.before_transition to: :confirm, do: :add_store_credit_payments
+    base.state_machine.before_transition to: [:address, :complete], do: :add_store_credit_payments
     base.state_machine.after_transition to: :confirm, do: :create_gift_cards
+    base.state_machine.after_transition to: :complete, do: :capture_store_credit
 
     base.prepend(InstanceMethods)
   end
@@ -46,6 +47,10 @@ module SpreeStoreCredits::OrderDecorator
       user.total_available_store_credit >= total
     end
     alias_method :covered_by_store_credit, :covered_by_store_credit?
+
+    def payment_required?
+      !covered_by_store_credit?
+    end
 
     def total_available_store_credit
       return 0.0 unless user
@@ -132,6 +137,10 @@ module SpreeStoreCredits::OrderDecorator
 
     def store_credit_amount(credit, total)
       [credit.amount_remaining, total].min
+    end
+
+    def capture_store_credit
+      payments.store_credits.valid.collect(&:capture!)
     end
   end
 end
