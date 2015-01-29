@@ -123,7 +123,8 @@ describe "Order" do
         before { subject }
 
         it "should invalidate the credit card payment" do
-          cc_payment.reload.state.should == 'invalid'
+          expect(cc_payment.reload.state).to eq('invalid')
+          cc_payment.destroy!
         end
       end
 
