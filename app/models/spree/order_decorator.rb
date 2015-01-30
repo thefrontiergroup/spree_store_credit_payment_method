@@ -1,5 +1,7 @@
 module SpreeStoreCredits::OrderDecorator
   def self.included(base)
+    # Address and Complete are required to show store credit is covering order
+    # and get the amount of store credit correct
     base.state_machine.before_transition to: [:address, :complete], do: :add_store_credit_payments
     base.state_machine.after_transition to: :confirm, do: :create_gift_cards
     base.state_machine.after_transition to: :complete, do: :capture_store_credit

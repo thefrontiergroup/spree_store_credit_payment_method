@@ -40,6 +40,7 @@ FactoryGirl.define do
     active        true
     environment   "test"
     auto_capture  true
+    display_on    "back_end"
   end
 
   factory :store_credit_payment, class: Spree::Payment, parent: :payment do
