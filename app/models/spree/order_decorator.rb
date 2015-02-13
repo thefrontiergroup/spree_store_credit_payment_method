@@ -2,7 +2,8 @@ module SpreeStoreCredits::OrderDecorator
   def self.included(base)
     # Address and Complete are required to show store credit is covering order
     # and get the amount of store credit correct
-    base.state_machine.before_transition to: [:address, :complete], do: :add_store_credit_payments
+    base.state_machine.before_transition to: [:address, :delivery, :payment, :complete], do: :charge_as_much_store_credit_as_possible
+    base.state_machine.before_transition to: :confirm, do: :add_store_credit_payments
     base.state_machine.after_transition to: :confirm, do: :create_gift_cards
     base.state_machine.after_transition to: :complete, do: :capture_store_credit
 
@@ -18,7 +19,8 @@ module SpreeStoreCredits::OrderDecorator
       end
     end
 
-    def add_store_credit_payments
+    def charge_as_much_store_credit_as_possible
+      payments.where(state: 'invalid').collect(&:destroy!)
       payments.store_credits.where(state: 'checkout').map(&:invalidate!)
 
       remaining_total = outstanding_balance
@@ -36,6 +38,13 @@ module SpreeStoreCredits::OrderDecorator
           remaining_total -= amount_to_take
         end
       end
+
+      remaining_total
+    end
+
+    def add_store_credit_payments
+
+      remaining_total = charge_as_much_store_credit_as_possible
 
       reconcile_with_credit_card(existing_credit_card_payment, remaining_total)
 
