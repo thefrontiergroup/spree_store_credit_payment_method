@@ -127,14 +127,14 @@ module SpreeStoreCredits::OrderDecorator
     def reconcile_with_credit_card(other_payment, amount)
       return unless other_payment
 
-      unless other_payment.source.is_a?(Spree::CreditCard)
-        raise "Found unexpected payment method. Credit cards are the only other supported payment type"
-      end
-
       if amount.zero?
-        other_payment.invalidate!
+        other_payment.invalidate! and return
       else
         other_payment.update_attributes!(amount: amount)
+      end
+
+      unless other_payment.source.is_a?(Spree::CreditCard)
+        raise "Found unexpected payment method. Credit cards are the only other supported payment type"
       end
     end
 
